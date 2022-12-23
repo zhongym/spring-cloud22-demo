@@ -1,0 +1,71 @@
+spring:
+  profiles:
+    active: #spring.profiles.active#
+
+  application:
+    name: demo-service
+  config:
+    import:
+      - nacos:application.yml?refreshEnabled=true
+  cloud:
+    nacos:
+      # 配置
+      config:
+        # 读取机器bootstrap.yml 开发环境使用server-addr
+        server-addr: 192.168.0.1:8848
+        namespace: dev
+        file-extension: yml
+      # 注册
+      discovery:
+        # 读取机器bootstrap.yml
+        server-addr: 192.168.0.1:8848
+        namespace: dev
+
+    openfeign:
+      # 启用okhttp
+      okhttp:
+        enabled: true
+      # http超时配置
+      client:
+        config:
+          default:
+            connectTimeout: 10000
+            readTimeout: 10000
+      # 开启断路器
+      circuitbreaker:
+        enabled: true
+
+    # 负载均衡
+    loadbalancer:
+      cache:
+        enabled: true
+        ttl: 335
+
+      # 全局健康检查
+      health-check:
+       interval: 25
+       refetchInstancesInterval: 10
+
+      # 全局重试配置
+      retry:
+       # 该参数用来开启或关闭重试机制，默认是开启
+       enabled: true
+       # 对当前实例重试的次数，默认值: 0
+       max-retries-on-same-service-instance: 1
+       # 切换实例进行重试的次数，默认值: 1
+       max-retries-on-next-service-instance: 1
+       # 对所有的操作请求都进行重试,默认只重试get请求
+       retry-on-all-operations: false
+       # 是否所有异常都重试，默认只重试：IOException、TimeoutException、RetryableStatusCodeException
+       retry-on-all-exceptions: true
+       retryableStatusCodes:
+          - 500
+
+
+
+
+logging:
+  level:
+    root: debug
+#  config: classpath:logback-spring.xml
+
